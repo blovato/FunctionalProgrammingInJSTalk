@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FP in JS</title>
+  <meta charset="utf-8">
+  <style>
+    @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+    @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+    @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+    body { font-family: 'Droid Serif'; }
+    h1, h2, h3 {
+      font-family: 'Yanone Kaffeesatz';
+      font-weight: normal;
+    }
+    .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+  </style>
+</head>
+<body>
+<textarea id="source">
+
+    class: center, middle
+
+    # Functional Programming
+    ## in Javascript
+    & my opinions
+
+    ---
+
+    class: center, middle
+
+    ## Javascript has multiple paradigms
+
+    ---
+
+    #### Imperative
+    ```javascript
+        let oddRange10 = [];
+        for (x = 1; x <= 10; x++) {
+            if (x % 2) {
+                oddRange10.push(x);
+            }
+        }
+        // oddRange10 = [1, 3, 5, 7, 9]
+    ```
+    ##### pros
+    * easy to understand
+    * it works..?
+
+    ##### cons
+    * difficult to maintain
+    * diffucult to reuse
+    * depressing
+
+    ---
+
+    #### Object Oriented
+    ```javascript
+        class Range extends Array {
+            constructor(...args) {
+                super(...args);
+            }
+            popAll() {
+                this.forEach(() => this.pop());
+            }
+            odd() {
+                const oddArray = this.filter((x) => x % 2);
+                this.popAll();
+                this.concat(oddArray);
+            }
+        }
+        const oddRange10 = (new Range(10)).odd(); // [1, 3, 5, 7, 9]
+    ```
+    ##### pros
+    * easy to understand; objects make sense because they are concrete
+    * reusable due to classes and inheritance
+
+    ##### cons
+    * potential race conditions
+    * have access to methods you don't need: monkey banana jungle problem
+
+    ---
+
+    #### Functional
+    ```javascript
+        const makeArray = (length) => Array.from({ length });
+        const map = (iterator) => (array) => array.map(iterator);
+        const range = map((x, i) => i + 1);
+        const filter = (predicate) => (array) => array.filter(predicate);
+        const isOdd = (x) => x % 2;
+        const filterOdd = filter(isOdd);
+
+        flow(
+            makeArray,
+            range,
+            filterOdd,
+        )(10) // [1, 3, 5, 7, 9]
+    ```
+    ##### pros
+    * simple ✨
+    * pure functions with no side effects
+    * highly reusable and composable
+    * point-free style
+
+    ##### cons
+    * can lack readability because it's abstract and intuitive
+    * less popular -> less documentation
+
+    ---
+
+    ## Functional requirements
+
+    * Pure 👼: Expect the same output from the same function, provided the same input.
+    * No state changes or mutability.
+    * Declarative, rather than imperative (statements).
+    * Atomic units, highly reusable and maintainable parts.
+    * First class functions: fancy way of saying functions are treated like any other variable
+
+    #### Some FP languages
+
+    * Lisp 🎅
+    * Scheme
+    * Haskell
+    * Clojure 💅
+        ```clojure
+            (->>
+               (range 10)
+               (map inc)
+               (filter odd?) ; '(1 3 5 7 9)
+        ```
+    * Javascript (whaat?!)
+
+
+    ---
+
+    class: center, middle
+
+    ## Practical functional concepts in JS
+
+    ---
+
+    #### Pure Functions
+    When a function returns the same output from the same function, provided the same input.
+    ```javascript
+        const add = (x, y) => x + y;
+    ```
+    Also, no side effects.
+
+    Bad:
+    ```javascript
+        const updateShopperElement = (shopper) => {
+            const shopperEl = document.createElement('div');
+            shopperEl.textContent = shopper.name;
+            document.body.appendChild(shopperEl);
+        }
+    ```
+    Better:
+    ```javascript
+        const getShopperElement = (shopper) => {
+            const shopperEl = document.createElement('div');
+            shopperEl.textContent = shopper.name;
+            return shopperEl;
+        }
+        document.body.appendChild(getShopperElement(shopper));
+
+    ```
+
+    ---
+
+    #### Higher order functions
+    When a function accepts a function as an argument or returns a function.
+    Most used widely used functional practice, thanks to Array methods.
+
+    ```javascript
+        // map, filter, forEach, sort, reduce, ...
+        [].map(() => {})
+    ```
+
+    And in connected react components:
+    ```javascript
+        import { connect } from 'react-redux';
+
+        const MyComponent = ({ shopper }) => <span>shopper.name</span>;
+
+        const mapStateToProps = ({ shopper }) => ({ shopper });
+        // connect is a higher order function
+        const connectWithProps = connect(mapStateToProps); // returns func
+        // connectWithProps is also a higher order function
+        export default connectWithProps(MyComponent); // returns func, or class
+    ```
+    Aka function factories
+    ```javascript
+        const getMessage => greet => name => `${greet} ${name}`;
+        const sayHelloTo = getMessage('Hello');
+
+        sayHelloTo('world'); // 'Hello world'
+        sayHelloTo('nathan'); // 'Hello nathan'
+    ```
+
+    ---
+
+    #### Currying
+    Currying is a process of transforming a function with many arguments into a function with one
+    argument that returns another function that takes more arguments as needed.
+
+    Not curried:
+    ```javascript
+        const map = (iteratee, iterator) => iteratee.map(iterator);
+        map([1,2,3], (x) => x + 1);
+    ```
+    Curried:
+    ```javascript
+        const map = (iteratee) => (iterator) => iteratee.map(iterator);
+        map([1,2,3])((x) => x + 1);
+    ```
+
+    Functions can be written as curried explicitly, or transformed dynamically with a `curry`
+    function (lodash has a util for this).
+    ```javascript
+        import curry from 'lodash/curry';
+
+        const map = (iteratee, iterator) => iteratee.map(iterator);
+        const curriedMap = curry(map)([1,2,3])((x) => x + 1);
+    ```
+
+    ---
+
+    #### Composition
+    This allows us to build complex functions from many simple, generic functions.
+
+    Rewriting the function from earlier using lodash/fp:
+    ```javascript
+        import { flow, map, filter } from 'lodash/fp';
+        const isOdd = (x) => x % 2;
+        flow(                       // 10
+            Array                   // [undefined x10]
+            map((x, i) => i + 1),   // [1,2,3,4,5,6,7,8,9,10]
+            filter(isOdd),          // [1,3,5,7,9]
+        )(10)
+    ```
+
+    Note: `lodash/fp` is optimized for functional programming because it auto curries functions, and
+    reorders arguments to be iterator first, iteratee last.
+
+    ---
+
+    class: center, middle
+
+    ![legos](https://marmelab.com/images/blog/lego-curry.gif)
+
+    ---
+
+    ### Sources
+
+    * http://pepa.holla.cz/wp-content/uploads/2016/08/Functional-Programming-in-JavaScript.pdf
+    * https://hackernoon.com/currying-in-js-d9ddc64f162e
+
+</textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js">
+</script>
+<script>
+  var slideshow = remark.create();
+</script>
+</body>
+</html>
