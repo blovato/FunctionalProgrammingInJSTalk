@@ -14,6 +14,9 @@
       font-weight: normal;
     }
     .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    .image-50 img {
+        width: 50%;
+    }
   </style>
 </head>
 <body>
@@ -21,9 +24,8 @@
 
     class: center, middle
 
-    # Functional Programming
+    # FUNctional Programming
     ## in Javascript
-    & my opinions
 
     ---
 
@@ -44,12 +46,11 @@
         // oddRange10 = [1, 3, 5, 7, 9]
     ```
     ##### pros
-    * easy to understand
     * it works..?
 
     ##### cons
     * difficult to maintain
-    * diffucult to reuse
+    * not very reusable
     * depressing
 
     ---
@@ -99,6 +100,8 @@
     ##### pros
     * simple ✨
     * pure functions with no side effects
+    * reduced coupling
+    * easy to test
     * highly reusable and composable
     * point-free style
 
@@ -248,8 +251,61 @@
 
     ![legos](https://marmelab.com/images/blog/lego-curry.gif)
 
+    ## Advanced functional concepts
+
     ---
 
+    #### Categories
+    are sets with all elements of the same type
+
+    `[1, 2, 3]`
+
+    `['a', 'b', 'c']`
+
+    `new Set([1, 2, 3])`
+
+    ---
+
+
+    #### Morphisms
+    are pure functions operating on types
+    * *Homomorphic*: pure functions that operate on a single *Category*
+
+        * multiply `(x, y) => x * y`, which only operates on numbers
+
+
+    * *Polymorphic*: pure functions that operate on multiple *Categories*
+
+        * add `(x, y) => x + y`, which operates on numbers and strings
+    ---
+
+    #### Category Theory
+    is the connecting of the dots ...
+
+    *Functions can be composed when the the category of the first morphism is the expected input of the second morphism.*
+
+    .image-50[![commutative diagram](https://i.stack.imgur.com/PTYH4.png)]
+
+    ---
+
+    #### Functors
+    are pure functions that operate on *Categories*
+
+    ```javascript
+    /* category    functor    morphism       */
+       [1, 2, 3]   .map(      (x) => x * 2     );
+    ```
+
+    `[1, 2, 3]` is a *category* with the type number, `(x) => x * 2` is a *homomorphic* operation, and `map` is a *functor*
+
+    ```javascript
+        const map = (fn) => (array) => array.map(fn);
+
+        const incrementAll = map((x) => x + 1);
+        incrementAll([1, 2, 3]); // [2, 3, 4]
+    ```
+
+    ---
     ### Sources
 
     * http://pepa.holla.cz/wp-content/uploads/2016/08/Functional-Programming-in-JavaScript.pdf
