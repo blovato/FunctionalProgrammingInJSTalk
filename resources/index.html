@@ -24,7 +24,7 @@
 
     class: center, middle
 
-    # FUNctional Programming
+    # Functional Programming
     ## in Javascript
 
     ---
@@ -138,7 +138,7 @@
 
     class: center, middle
 
-    ## Practical functional concepts in JS
+    ## functional concepts: level 1
 
     ---
 
@@ -251,7 +251,7 @@
 
     ![legos](https://marmelab.com/images/blog/lego-curry.gif)
 
-    ## Advanced functional concepts
+    ## functional concepts: level 2
 
     ---
 
@@ -306,6 +306,95 @@
     ```
 
     ---
+
+    #### Monads
+    not totally clear on this;
+    * are a type of functor
+    * context wrapping some value
+    * have methods to lift a value into the monad and methods to flatten the monad to a value
+
+    ex. Promises, Maybes, Lenses
+
+    ---
+
+    class: center, middle
+
+    ## Practical use cases
+
+    ---
+
+    #### Utilities
+    * Isolated, reusable functionality - allows for partial adoption
+    * Easy to reason about
+
+    ```javascript
+      // utils/time.js
+      import { flow } from 'lodash';
+      import { subtract } from 'lodash/fp';
+      import { ifElse } from './fp-utils';
+
+      export const sleep = (timeoutInMs = 0) => (
+        new Promise((resolve) => setTimeout(resolve, timeoutInMs))
+      );
+
+      export const ensureTimeElapsed = (startInMs, minDurationInMs) => flow(
+        () => Date.now() - startInMs,
+        subtract(minDurationInMs),
+        ifElse((timeout) => timeout > 0, (timeout) => timeout, () => 0),
+        sleep,
+      )();
+    ```
+
+    ---
+
+    #### Container/Presentational Components
+    * Separate concerns and decouple react from the data
+
+    ##### Containers:
+    * do data stuff: redux and state, lifecycle methods, logic and transforms
+    * don't do view stuff
+
+    ```javascript
+      // ... imports
+      const withComponentDidMount = withLifeCycleMethod({ componentDidMount() {
+        this.props.updateHit();
+      })
+
+      const mapStateToProps = ({ shopper }, ownProps) => ({
+        hitId: shopper.hitId,
+      });
+
+      const mapDispatchToProps = (dispatch) => ({
+        updateHit: debounce(flow(updateHit, dispatch), 350),
+      });
+
+      export default flowRight(
+        connect(mapStateToProps, mapDispatchToProps),
+        withComponentDidMount,
+      )(MyComponent);
+    ```
+    ---
+
+    #### Container/Presentational Components
+    * Separate concerns and decouple react from the data
+
+    ##### Presentations:
+    * do view stuff
+    * don't do data stuff
+
+    ```javascript
+      import React from 'react';
+      import cx from 'classnames';
+      import styles from './styles.scss';
+
+      const MyComponent = ({ hitId }) => (
+        <div className={cx(styles.title)}>{hitId}</div>
+      );
+      export default MyCompnent;
+    ```
+
+    ---
+
     ### Sources
 
     * http://pepa.holla.cz/wp-content/uploads/2016/08/Functional-Programming-in-JavaScript.pdf
