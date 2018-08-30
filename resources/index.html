@@ -121,9 +121,10 @@
 
     #### Some FP languages
 
-    * Lisp 🎅
+    * Lisp 🎅- 1958
     * Scheme
     * Haskell
+    * Elixir
     * Clojure 💅
         ```clojure
             (->>
@@ -131,8 +132,6 @@
                (map inc)
                (filter odd?) ; '(1 3 5 7 9)
         ```
-    * Javascript (whaat?!)
-
 
     ---
 
@@ -234,11 +233,10 @@
     Rewriting the function from earlier using lodash/fp:
     ```javascript
         import { flow, map, filter } from 'lodash/fp';
-        const isOdd = (x) => x % 2;
         flow(                       // 10
             Array                   // [undefined x10]
             map((x, i) => i + 1),   // [1,2,3,4,5,6,7,8,9,10]
-            filter(isOdd),          // [1,3,5,7,9]
+            filter((x) => x % 2),   // [1,3,5,7,9]
         )(10)
     ```
 
@@ -269,12 +267,12 @@
 
     #### Morphisms
     are pure functions operating on types
-    * *Homomorphic*: pure functions that operate on a single *Category*
+    * *Homomorphic*: pure functions that operate on a single type
 
         * multiply `(x, y) => x * y`, which only operates on numbers
 
 
-    * *Polymorphic*: pure functions that operate on multiple *Categories*
+    * *Polymorphic*: pure functions that operate on multiple types
 
         * add `(x, y) => x + y`, which operates on numbers and strings
     ---
@@ -282,7 +280,7 @@
     #### Category Theory
     is the connecting of the dots ...
 
-    *Functions can be composed when the the category of the first morphism is the expected input of the second morphism.*
+    *Functions can be composed when the type or category of the first morphism is the expected input of the second morphism.*
 
     .image-50[![commutative diagram](https://i.stack.imgur.com/PTYH4.png)]
 
@@ -313,7 +311,7 @@
     * context wrapping some value
     * have methods to lift a value into the monad and methods to flatten the monad to a value
 
-    ex. Promises, Maybes, Lenses
+    ex. Promises, jQuery, Maybes, Lenses
 
     ---
 
@@ -324,7 +322,8 @@
     ---
 
     #### Utilities
-    * Isolated, reusable functionality - allows for partial adoption
+    * Isolated, reusable functionality
+    * Partial adoption of fp in an application
     * Easy to reason about
 
     ```javascript
@@ -399,6 +398,7 @@
 
     * http://pepa.holla.cz/wp-content/uploads/2016/08/Functional-Programming-in-JavaScript.pdf
     * https://hackernoon.com/currying-in-js-d9ddc64f162e
+    ![kool aid](https://cdn-images-1.medium.com/max/1600/0*9xvLTTK5EFEBnGG5.jpg)
 
 </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js">
